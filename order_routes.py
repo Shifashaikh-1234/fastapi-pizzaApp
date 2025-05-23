@@ -14,6 +14,11 @@ session = Session(bind=engine)
 
 @order_router.get("/")
 async def get_orders(Authorize: AuthJWT = Depends()):
+
+    """
+      ## This is a test route to check if the order router is working.
+        This returns a message "Order route" if the user is authenticated.
+    """
     try:
         Authorize.jwt_required()
     except Exception as e:
@@ -24,6 +29,14 @@ async def get_orders(Authorize: AuthJWT = Depends()):
 
 @order_router.post("/order", status_code=status.HTTP_201_CREATED)
 async def place_an_order(order: OrderModel, Authorize: AuthJWT = Depends()):
+     
+    """
+     ## Placing an order
+     This requires the following
+     - quantity: integer
+     - pizza_size: str
+    """
+
     try:
         Authorize.jwt_required()
     except Exception as e:
@@ -50,8 +63,17 @@ async def place_an_order(order: OrderModel, Authorize: AuthJWT = Depends()):
  
     return jsonable_encoder(response)
 
+
+
 @order_router.get("/orders") #list all orders
 async def list_all_orders(Authorize: AuthJWT = Depends()):
+    
+    """
+     ## List of all orders
+     This lists all orders made.it can be accessed by superusers
+    
+    """
+
     try:
         Authorize.jwt_required()
     except Exception as e:
@@ -72,6 +94,11 @@ async def list_all_orders(Authorize: AuthJWT = Depends()):
 
 @order_router.get("/orders/{id}")  #get order by id
 async def get_order_by_id(id: int, Authorize: AuthJWT = Depends()):
+    """
+     ## Get order by its ID
+     This gets an order by its id & is only accessed by a superuser
+
+    """
     try:
         Authorize.jwt_required()
     except Exception as e:
@@ -90,6 +117,10 @@ async def get_order_by_id(id: int, Authorize: AuthJWT = Depends()):
 
 @order_router.get("/user/order")  #get orders by user
 async def get_orders_by_user(Authorize: AuthJWT = Depends()):
+    """
+     ## Get a current user's orders
+     this lists the orders made by currently logged in users
+    """
     try:
         Authorize.jwt_required()
     except Exception as e:
@@ -104,6 +135,10 @@ async def get_orders_by_user(Authorize: AuthJWT = Depends()):
     
 @order_router.get("/user/order/{id}/")  #get orders by user
 async def get_specific_order(id: int, Authorize: AuthJWT = Depends()):
+    """
+    ## Get a specific order by the currently logged in user
+    This returns an order by ID for the currently logged in user
+    """
     try:
         Authorize.jwt_required()
     except Exception as e:
@@ -121,6 +156,12 @@ async def get_specific_order(id: int, Authorize: AuthJWT = Depends()):
     
 @order_router.put("/order/update/{id}/")  #update order
 async def update_order(id: int, order:OrderModel ,Authorize: AuthJWT = Depends()):
+    """
+    ## Updating an order
+    This updates an order and requires the following fields
+    - quantity: integer
+    - pizza_size: str
+    """
     try:
         Authorize.jwt_required()
     except Exception as e:
@@ -144,6 +185,11 @@ async def update_order(id: int, order:OrderModel ,Authorize: AuthJWT = Depends()
 
 @order_router.patch("/order/update/{id}/")  #update order status
 async def update_order_status(id: int,order:OrderStatusModel ,Authorize: AuthJWT = Depends()):
+    """
+    ##Updating an order status
+    This is for updating the an order's status and required following field
+    - order_status: str
+    """
     try:
         Authorize.jwt_required()
     except Exception as e:
@@ -168,6 +214,11 @@ async def update_order_status(id: int,order:OrderStatusModel ,Authorize: AuthJWT
 
 @order_router.delete("/order/delete/{id}/", status_code=status.HTTP_204_NO_CONTENT)  #delete order
 async def delete_an_order(id: int, Authorize: AuthJWT = Depends()):
+    """
+    ## Delete an order
+    This deletes an order by its ID
+    
+    """
     try:
         Authorize.jwt_required()
     except Exception as e:

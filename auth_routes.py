@@ -19,6 +19,10 @@ session= Session(bind=engine)
 #JWT config
 @auth_router.get("/")
 async def get_auth(Authorize: AuthJWT= Depends()):
+
+    """
+    ## Sample route
+    """
     try:
         Authorize.jwt_required()
     except Exception as e:
@@ -30,6 +34,15 @@ async def get_auth(Authorize: AuthJWT= Depends()):
 #signup route
 @auth_router.post("/signup",status_code=status.HTTP_201_CREATED)
 async def signup(user: SignUpModel):
+    """
+    ## Create a user
+    This requires the following fields
+            - username : str,
+            - email: str,
+            - password: str,
+            - is_active: bool,
+            - is_staff: bool
+    """
     db_email= session.query(User).filter(User.email == user.email).first()
     if db_email is not None:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Email already registered")
@@ -56,6 +69,13 @@ async def signup(user: SignUpModel):
 #login route
 @auth_router.post("/login",status_code=status.HTTP_200_OK)
 async def login(user: LoginModel, Authorize: AuthJWT= Depends()):
+    """
+    ## Login a user
+    This requires following fields
+    - username: str
+    - password: str
+    This returns a pair of `access` and `refresh`
+    """
     db_user= session.query(User).filter(User.username == user.username).first()
     if db_user is None:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid username or password")
@@ -78,6 +98,10 @@ async def login(user: LoginModel, Authorize: AuthJWT= Depends()):
 #refresh token route
 @auth_router.get("/refresh")
 async def refresh_token(Authorize: AuthJWT= Depends()):
+    """
+    ## Create a fresh token
+    This creates a fresh token & it requires a refresh token.
+    """
     try:
         Authorize.jwt_refresh_token_required()
     except Exception as e:
